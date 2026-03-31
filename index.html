@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TFG - Generación de escenas en realidad extendida mediante voz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --secondary: #6f42c1;
+      --dark: #111827;
+      --muted: #6b7280;
+      --light-bg: #f8fafc;
+      --card-border: #e5e7eb;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #ffffff;
+      color: var(--dark);
+    }
+
+    .navbar {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+		.hero {
+			min-height: 88vh;
+			display: flex;
+			align-items: center;
+			color: white;
+			background: #111827;
+		}
+
+		.hero-video {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			z-index: 0;
+		}
+
+		.hero-overlay {
+			position: absolute;
+			inset: 0;
+			background: rgba(17, 24, 39, 0.6);
+			z-index: 1;
+		}
+
+		.hero .container {
+			z-index: 2;
+		}
+
+		.btn-rounded {
+			border-radius: 999px;
+			padding-left: 1.2rem;
+			padding-right: 1.2rem;
+		}
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .section {
+      padding: 5rem 0;
+    }
+
+    .section-title {
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      max-width: 760px;
+      margin: 0 auto 2.5rem auto;
+    }
+
+    .feature-card,
+    .resource-card,
+    .demo-card,
+    .contact-card {
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      background: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      height: 100%;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .feature-card:hover,
+    .resource-card:hover,
+    .demo-card:hover,
+    .contact-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+    }
+
+    .card-img-top {
+      height: 220px;
+      object-fit: cover;
+      background: #eef2ff;
+    }
+
+    .resource-icon {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+
+    .resource-card .card-body,
+    .demo-card .card-body,
+    .feature-card .card-body,
+    .contact-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .bg-soft {
+      background: var(--light-bg);
+    }
+
+    .list-check li {
+      margin-bottom: 0.65rem;
+    }
+
+    .mock-window {
+      border-radius: 1.2rem;
+      overflow: hidden;
+      border: 1px solid #dbe3f0;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+      background: white;
+    }
+
+    .mock-window-header {
+      background: #eef2f7;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #dbe3f0;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.35rem;
+    }
+
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #febc2e; }
+    .dot.green { background: #28c840; }
+
+    .tech-badge {
+      display: inline-block;
+      margin: 0.25rem;
+      padding: 0.5rem 0.85rem;
+      background: #eef2ff;
+      color: #312e81;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    footer {
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 2.5rem 0;
+    }
+
+    .btn-rounded {
+      border-radius: 999px;
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+    }
+
+    .shadow-soft {
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    footer a {
+    	transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    footer a:hover {
+			transform: scale(1.2);
+			opacity: 0.8;
+    }
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top border-bottom" data-bs-theme="light">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="navMain" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#descripcion">Descripción</a></li>
+        <li class="nav-item"><a class="nav-link" href="#recursos">Enlaces</a></li>
+        <li class="nav-item"><a class="nav-link" href="#demos">Demos</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero position-relative overflow-hidden">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/video/loop.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-11 col-xl-10">
+        <h1 class="display-3 fw-bold mb-3">Generación de escenas en realidad extendida mediante voz</h1>
+        <p class="lead mb-4">
+          Aplicación web inmersiva capaz de crear y modificar escenas tridimensionales
+          a partir de instrucciones dadas por el usuario mediante voz o texto.
+        </p>
+        <p class="mb-4 fs-5">
+          Integración de reconocimiento de voz, modelos de lenguaje, YAML y renderizado 3D
+          con A-Frame, con soporte para escritorio y Meta Quest 2.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="#recursos" class="btn btn-light btn-lg btn-rounded">Ver documentación</a>
+          <a href="#demos" class="btn btn-outline-light btn-lg btn-rounded">Ver demos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="descripcion" class="section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Descripción del proyecto</h2>
+      <p class="section-subtitle">
+        Este TFG propone una nueva forma de interacción con entornos virtuales,
+        permitiendo que el usuario describa una habitación o una escena con lenguaje natural
+        para que el sistema la interprete y la genere dinámicamente en el navegador.
+      </p>
+    </div>
+
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <img src="assets/img/vr.jpg" alt="Descripción del proyecto" class="img-fluid rounded-4 shadow-soft">
+      </div>
+      <div class="col-lg-6">
+        <div class="feature-card">
+          <div class="card-body">
+            <h3 class="h4 mb-3">¿Qué hace la aplicación?</h3>
+            <ul class="list-check">
+              <li>Captura comandos por voz o por texto.</li>
+              <li>Interpreta la intención del usuario con modelos de lenguaje.</li>
+              <li>Genera una representación estructurada de la escena en YAML.</li>
+              <li>Renderiza la habitación y los objetos en A-Frame.</li>
+              <li>Permite su uso tanto en escritorio como en realidad virtual.</li>
+            </ul>
+            <div class="mt-3">
+              <span class="tech-badge">A-Frame</span>
+              <span class="tech-badge">OpenRouter</span>
+              <span class="tech-badge">Vosk</span>
+              <span class="tech-badge">Whisper</span>
+              <span class="tech-badge">Web Speech API</span>
+              <span class="tech-badge">GitHub Pages</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="recursos" class="section bg-soft">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Enlaces</h2>
+      <p class="section-subtitle">
+        Acceso directo a la memoria, la presentación, el código fuente y la demo en vivo.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="resource-card text-center">
+          <div class="card-body">
+            <img src="assets/img/pdf.jpg" class="resource-icon" alt="Memoria PDF">
+            <h3 class="h5">Memoria</h3>
+            <p class="text-muted">Documento completo del TFG en formato PDF.</p>
+            <a href="files/memoria.pdf" target="_blank" class="btn btn-primary btn-rounded">Abrir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="resource-card text-center">
+          <div class="card-body">
+            <img src="assets/img/slides-icon.png" class="resource-icon" alt="Presentación">
+            <h3 class="h5">Presentación</h3>
+            <p class="text-muted">Transparencias utilizadas en la defensa.</p>
+            <a href="files/presentacion.pdf" target="_blank" class="btn btn-primary btn-rounded">Abrir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="resource-card text-center">
+          <div class="card-body">
+            <img src="assets/img/github-logo.png" class="resource-icon" alt="Código en GitHub">
+            <h3 class="h5">Código fuente</h3>
+            <p class="text-muted">Repositorio principal del proyecto desarrollado.</p>
+            <a href="https://github.com/rojalonsocarri2017/automatedMuseum" target="_blank" class="btn btn-dark btn-rounded">Ver repositorio</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="resource-card text-center">
+          <div class="card-body">
+            <img src="assets/img/web-icon.png" class="resource-icon" alt="Demo en vivo">
+            <h3 class="h5">Demo en vivo</h3>
+            <p class="text-muted">Versión demo del proyecto accesible desde un navegador.</p>
+            <a href="https://rojalonsocarri2017.github.io/automatedMuseum/TFG/" target="_blank" class="btn btn-success btn-rounded">Abrir demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="demos" class="section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Demos</h2>
+      <p class="section-subtitle">
+        Ejemplos visuales del funcionamiento del sistema y de los escenarios generados.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="demo-card">
+          <img src="assets/img/demo-escritorio.jpg" class="card-img-top" alt="Demo escritorio">
+          <div class="card-body">
+            <h3 class="h5">Entorno de escritorio</h3>
+            <p class="text-muted">
+              Ejecución de la aplicación desde navegador, con interacción mediante voz y texto.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="demo-card">
+          <img src="assets/img/demo-vr.jpg" class="card-img-top" alt="Demo VR">
+          <div class="card-body">
+            <h3 class="h5">Entorno VR</h3>
+            <p class="text-muted">
+              Uso inmersivo con Meta Quest 2, manteniendo el flujo completo de generación de escenas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-5 g-4 align-items-center">
+      <div class="col-lg-7">
+        <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-soft">
+          <iframe
+            src="https://www.youtube.com/embed/TU_VIDEO"
+            title="Vídeo demo del TFG"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h3 class="h4 mb-3">Vídeo demostrativo</h3>
+        <p class="text-muted">
+          Vídeo resumen del proyecto, mostrando su funcionamiento y características principales.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container text-center">
+    
+    <p class="mb-2 fw-semibold">Rodrigo Alonso · Trabajo Fin de Grado</p>
+    <p class="mb-4">2026 · Universidad Rey Juan Carlos</p>
+
+    <div class="d-flex justify-content-center gap-4">
+
+      <a href="mailto:rodri281299@gmail.com" class="text-light fs-4" title="Enviar email">
+        <i class="fas fa-envelope"></i>
+      </a>
+
+      <a href="https://www.linkedin.com/in/rodrigo-alonso-carriazo-rodr%C3%ADguez-7b102b269/" target="_blank" class="text-light fs-4" title="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
